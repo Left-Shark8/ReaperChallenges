@@ -9,6 +9,7 @@ RocketMod Unturned plugin that adds configurable daily and weekly player challen
 - Shuffles daily challenges every day and weekly challenges every 7 days.
 - Uses neon-pink chat messages by default.
 - Shows progress messages with percentages at configurable milestones.
+- Plays a configurable effect at the player when they complete a challenge.
 - Automatically tracks zombie kills, player kills, player headshot kills, crafting, tree/resource gathering, animal kills, crop harvesting, looting, fishing, headshots, travel, buildables, and throwables.
 - Stores progress in `challenge-progress.xml` so progress survives restarts.
 - Gives optional item rewards when a challenge is completed and claimed.
@@ -61,6 +62,10 @@ Default daily and weekly challenge pools are generated on first load. Players re
 <ChatColorBlue>240</ChatColorBlue>
 <ProgressMessagesEnabled>true</ProgressMessagesEnabled>
 <ProgressMessagePercentStep>10</ProgressMessagePercentStep>
+<CompletionEffectEnabled>true</CompletionEffectEnabled>
+<CompletionEffectId>20</CompletionEffectId>
+<CompletionEffectRadius>48</CompletionEffectRadius>
+<CompletionEffectYOffset>1</CompletionEffectYOffset>
 ```
 
 Daily pool:

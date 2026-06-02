@@ -38,5 +38,9 @@
       <HintPath>..\..\..\Libs\com.rlabrecque.steamworks.net.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="SDG.NetTransport">
+      <HintPath>..\..\..\Libs\SDG.NetTransport.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
   </ItemGroup>
 </Project>

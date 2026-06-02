@@ -13,6 +13,10 @@ public sealed class PluginConfiguration : IRocketPluginConfiguration
     public bool AnnounceCompletedChallenges { get; set; } = true;
     public bool ProgressMessagesEnabled { get; set; } = true;
     public int ProgressMessagePercentStep { get; set; } = 10;
+    public bool CompletionEffectEnabled { get; set; } = true;
+    public ushort CompletionEffectId { get; set; } = 20;
+    public float CompletionEffectRadius { get; set; } = 48f;
+    public float CompletionEffectYOffset { get; set; } = 1f;
     public bool GiveRewardItems { get; set; } = true;
     public int DailyChallengeCount { get; set; } = 3;
     public int WeeklyChallengeCount { get; set; } = 3;
@@ -29,6 +33,10 @@ public sealed class PluginConfiguration : IRocketPluginConfiguration
         AnnounceCompletedChallenges = true;
         ProgressMessagesEnabled = true;
         ProgressMessagePercentStep = 10;
+        CompletionEffectEnabled = true;
+        CompletionEffectId = 20;
+        CompletionEffectRadius = 48f;
+        CompletionEffectYOffset = 1f;
         GiveRewardItems = true;
         DailyChallengeCount = 3;
         WeeklyChallengeCount = 3;

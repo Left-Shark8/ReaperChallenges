@@ -207,6 +207,8 @@ public sealed class Plugin : RocketPlugin<PluginConfiguration>
             player.GiveItem(definition.RewardItemId, definition.RewardAmount);
         }
 
+        PlayCompletionEffect(player);
+
         if (announce && Configuration.Instance.AnnounceCompletedChallenges)
         {
             Say($"{player.DisplayName} completed {definition.Name}.");
@@ -324,6 +326,11 @@ public sealed class Plugin : RocketPlugin<PluginConfiguration>
             configuration.ProgressMessagePercentStep = 10;
         }
 
+        if (configuration.CompletionEffectRadius <= 0)
+        {
+            configuration.CompletionEffectRadius = 48f;
+        }
+
         configuration.ChatColorRed = ClampColor(configuration.ChatColorRed);
         configuration.ChatColorGreen = ClampColor(configuration.ChatColorGreen);
         configuration.ChatColorBlue = ClampColor(configuration.ChatColorBlue);
@@ -401,6 +408,25 @@ public sealed class Plugin : RocketPlugin<PluginConfiguration>
         }
 
         Say(player, $"{challenge.Definition.Name}: {currentProgress}/{target} ({currentPercent}%).");
+    }
+
+    private void PlayCompletionEffect(UnturnedPlayer player)
+    {
+        var configuration = Configuration.Instance;
+        if (!configuration.CompletionEffectEnabled || configuration.CompletionEffectId == 0)
+        {
+            return;
+        }
+
+        try
+        {
+            var position = player.Position + new Vector3(0f, configuration.CompletionEffectYOffset, 0f);
+            EffectManager.sendEffectReliable(configuration.CompletionEffectId, configuration.CompletionEffectRadius, position);
+        }
+        catch (Exception exception)
+        {
+            Rocket.Core.Logging.Logger.LogException(exception, "Failed to play challenge completion effect.");
+        }
     }
 
     private static int GetProgressPercent(int progress, int target)
