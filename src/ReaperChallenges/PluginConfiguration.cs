@@ -11,6 +11,8 @@ public sealed class PluginConfiguration : IRocketPluginConfiguration
     public byte ChatColorGreen { get; set; } = 16;
     public byte ChatColorBlue { get; set; } = 240;
     public bool AnnounceCompletedChallenges { get; set; } = true;
+    public bool ProgressMessagesEnabled { get; set; } = true;
+    public int ProgressMessagePercentStep { get; set; } = 10;
     public bool GiveRewardItems { get; set; } = true;
     public int DailyChallengeCount { get; set; } = 3;
     public int WeeklyChallengeCount { get; set; } = 3;
@@ -25,6 +27,8 @@ public sealed class PluginConfiguration : IRocketPluginConfiguration
         ChatColorGreen = 16;
         ChatColorBlue = 240;
         AnnounceCompletedChallenges = true;
+        ProgressMessagesEnabled = true;
+        ProgressMessagePercentStep = 10;
         GiveRewardItems = true;
         DailyChallengeCount = 3;
         WeeklyChallengeCount = 3;

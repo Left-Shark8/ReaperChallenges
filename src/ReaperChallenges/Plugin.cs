@@ -163,6 +163,7 @@ public sealed class Plugin : RocketPlugin<PluginConfiguration>
                 continue;
             }
 
+            var previousProgress = progress.Progress;
             progress.Progress = Math.Min(definition.Target, progress.Progress + amount);
             if (progress.Progress >= definition.Target)
             {
@@ -171,6 +172,13 @@ public sealed class Plugin : RocketPlugin<PluginConfiguration>
                 {
                     ClaimReward(player, challenge, announce);
                 }
+
+                continue;
+            }
+
+            if (announce)
+            {
+                SendProgressMessage(steamId, challenge, previousProgress, progress.Progress);
             }
         }
     }
@@ -311,6 +319,11 @@ public sealed class Plugin : RocketPlugin<PluginConfiguration>
             configuration.WeeklyChallengeCount = 3;
         }
 
+        if (configuration.ProgressMessagePercentStep <= 0 || configuration.ProgressMessagePercentStep > 100)
+        {
+            configuration.ProgressMessagePercentStep = 10;
+        }
+
         configuration.ChatColorRed = ClampColor(configuration.ChatColorRed);
         configuration.ChatColorGreen = ClampColor(configuration.ChatColorGreen);
         configuration.ChatColorBlue = ClampColor(configuration.ChatColorBlue);
@@ -356,6 +369,43 @@ public sealed class Plugin : RocketPlugin<PluginConfiguration>
             definition.Target = Math.Max(1, definition.Target);
             definition.RewardAmount = definition.RewardAmount == 0 ? (byte)1 : definition.RewardAmount;
         }
+    }
+
+    private void SendProgressMessage(string steamId, ActiveChallenge challenge, int previousProgress, int currentProgress)
+    {
+        var configuration = Configuration.Instance;
+        if (!configuration.ProgressMessagesEnabled || previousProgress >= currentProgress)
+        {
+            return;
+        }
+
+        var target = Math.Max(1, challenge.Definition.Target);
+        var previousPercent = GetProgressPercent(previousProgress, target);
+        var currentPercent = GetProgressPercent(currentProgress, target);
+        var step = Math.Max(1, configuration.ProgressMessagePercentStep);
+
+        if (currentPercent < 100 && currentPercent / step == previousPercent / step)
+        {
+            return;
+        }
+
+        if (!ulong.TryParse(steamId, out var parsedSteamId))
+        {
+            return;
+        }
+
+        var player = UnturnedPlayer.FromCSteamID(new CSteamID(parsedSteamId));
+        if (player == null)
+        {
+            return;
+        }
+
+        Say(player, $"{challenge.Definition.Name}: {currentProgress}/{target} ({currentPercent}%).");
+    }
+
+    private static int GetProgressPercent(int progress, int target)
+    {
+        return Math.Min(100, Math.Max(0, (int)Math.Floor(progress * 100d / Math.Max(1, target))));
     }
 
     private static string NormalizeChallengeType(string value)

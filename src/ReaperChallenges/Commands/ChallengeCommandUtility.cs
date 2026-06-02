@@ -28,7 +28,12 @@ internal static class ChallengeCommandUtility
             var progress = plugin.Store.GetOrCreateProgress(caller.Id, challenge.Definition.Id, challenge.PeriodKey);
             var status = progress.RewardClaimed ? "CLAIMED" : progress.Progress >= challenge.Definition.Target ? "READY" : "ACTIVE";
             plugin.Say(caller, $"{i + 1}. {challenge.Definition.Name} [{progress.Progress}/{challenge.Definition.Target}] {status}");
-            plugin.Say(caller, $"   {challenge.Definition.Description} | claim: /{commandName} claim {i + 1}");
+            plugin.Say(caller, $"   {challenge.Definition.Description}");
+
+            if (!progress.RewardClaimed && progress.Progress >= challenge.Definition.Target)
+            {
+                plugin.Say(caller, $"   Claim reward: /{commandName} claim {i + 1}");
+            }
         }
     }
 
