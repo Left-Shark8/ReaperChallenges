@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Linq;
 using ReaperChallenges.Configuration;
 using ReaperChallenges.Storage;
+using Rocket.API;
 using Rocket.Core.Plugins;
 using Rocket.Unturned;
 using Rocket.Unturned.Chat;
@@ -54,6 +55,25 @@ public sealed class Plugin : RocketPlugin<PluginConfiguration>
     public string Prefix(string message)
     {
         return $"{Configuration.Instance.ChatPrefix} {message}";
+    }
+
+    public Color ChatColor
+    {
+        get
+        {
+            var configuration = Configuration.Instance;
+            return new Color(configuration.ChatColorRed / 255f, configuration.ChatColorGreen / 255f, configuration.ChatColorBlue / 255f);
+        }
+    }
+
+    public void Say(IRocketPlayer player, string message)
+    {
+        UnturnedChat.Say(player, Prefix(message), ChatColor);
+    }
+
+    public void Say(string message)
+    {
+        UnturnedChat.Say(Prefix(message), ChatColor);
     }
 
     public IReadOnlyList<ActiveChallenge> GetActiveChallenges(string? period = null)
@@ -108,6 +128,17 @@ public sealed class Plugin : RocketPlugin<PluginConfiguration>
     {
         return GetActiveChallengesForPlayer(steamId)
             .FirstOrDefault(challenge => challenge.Definition.Id.Equals(id, StringComparison.OrdinalIgnoreCase));
+    }
+
+    public ActiveChallenge? FindActiveChallenge(string steamId, string period, string selector)
+    {
+        var challenges = GetActiveChallengesForPlayer(steamId, period).ToList();
+        if (int.TryParse(selector, out var index) && index >= 1 && index <= challenges.Count)
+        {
+            return challenges[index - 1];
+        }
+
+        return challenges.FirstOrDefault(challenge => challenge.Definition.Id.Equals(selector, StringComparison.OrdinalIgnoreCase));
     }
 
     public void AddProgress(string steamId, string playerName, string challengeType, int amount, bool announce)
@@ -170,10 +201,10 @@ public sealed class Plugin : RocketPlugin<PluginConfiguration>
 
         if (announce && Configuration.Instance.AnnounceCompletedChallenges)
         {
-            UnturnedChat.Say(Prefix($"{player.DisplayName} completed {definition.Name}."));
+            Say($"{player.DisplayName} completed {definition.Name}.");
         }
 
-        UnturnedChat.Say(player, Prefix(message));
+        Say(player, message);
         Store.Save();
         return true;
     }
@@ -280,6 +311,10 @@ public sealed class Plugin : RocketPlugin<PluginConfiguration>
             configuration.WeeklyChallengeCount = 3;
         }
 
+        configuration.ChatColorRed = ClampColor(configuration.ChatColorRed);
+        configuration.ChatColorGreen = ClampColor(configuration.ChatColorGreen);
+        configuration.ChatColorBlue = ClampColor(configuration.ChatColorBlue);
+
         configuration.DailyChallenges ??= new List<ChallengeDefinition>();
         configuration.WeeklyChallenges ??= new List<ChallengeDefinition>();
 
@@ -328,6 +363,11 @@ public sealed class Plugin : RocketPlugin<PluginConfiguration>
         return string.IsNullOrWhiteSpace(value)
             ? "player_kill"
             : value.Trim().ToLowerInvariant().Replace("-", "_").Replace(" ", "_");
+    }
+
+    private static byte ClampColor(byte value)
+    {
+        return value;
     }
 
     private static IReadOnlyList<ActiveChallenge> PickChallenges(string steamId, string periodKey, string period, List<ChallengeDefinition> definitions, int count)

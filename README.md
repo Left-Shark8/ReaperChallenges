@@ -7,6 +7,7 @@ RocketMod Unturned plugin that adds configurable daily and weekly player challen
 - Gives each player 3 daily and 3 weekly challenges from configurable pools.
 - Rotates progress by UTC day and UTC week.
 - Shuffles daily challenges every day and weekly challenges every 7 days.
+- Uses neon-pink chat messages by default.
 - Automatically tracks zombie kills, player kills, player headshot kills, crafting, tree/resource gathering, animal kills, crop harvesting, looting, fishing, headshots, travel, buildables, and throwables.
 - Stores progress in `challenge-progress.xml` so progress survives restarts.
 - Gives optional item rewards when a challenge is completed and claimed.
@@ -27,6 +28,10 @@ Restart the server once so Rocket creates the config.
 ## Commands
 
 ```text
+/cdaily
+/cdaily claim <number|id>
+/cweekly
+/cweekly claim <number|id>
 /challenges [daily|weekly]
 /challenge <id>
 /challenge claim <id>
@@ -50,6 +55,9 @@ Default daily and weekly challenge pools are generated on first load. Players re
 ```xml
 <DailyChallengeCount>3</DailyChallengeCount>
 <WeeklyChallengeCount>3</WeeklyChallengeCount>
+<ChatColorRed>255</ChatColorRed>
+<ChatColorGreen>16</ChatColorGreen>
+<ChatColorBlue>240</ChatColorBlue>
 ```
 
 Daily pool:

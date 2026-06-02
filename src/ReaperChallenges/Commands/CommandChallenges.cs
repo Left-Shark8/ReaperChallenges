@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Rocket.API;
-using Rocket.Unturned.Chat;
 
 namespace ReaperChallenges.Commands;
 
@@ -20,29 +19,23 @@ public sealed class CommandChallenges : IRocketCommand
         var plugin = Plugin.Instance;
         if (plugin?.Store == null)
         {
-            UnturnedChat.Say(caller, "ReaperChallenges is not loaded.");
             return;
         }
 
         string? period = command.Length > 0 ? command[0] : null;
         if (period != null && !period.Equals("daily", StringComparison.OrdinalIgnoreCase) && !period.Equals("weekly", StringComparison.OrdinalIgnoreCase))
         {
-            UnturnedChat.Say(caller, plugin.Prefix("Use /challenges daily or /challenges weekly."));
+            plugin.Say(caller, "Use /cdaily or /cweekly for cleaner challenge lists.");
             return;
         }
 
-        var challenges = plugin.GetActiveChallengesForPlayer(caller.Id, period).ToList();
-        if (challenges.Count == 0)
+        if (period == null)
         {
-            UnturnedChat.Say(caller, plugin.Prefix("No challenges are configured."));
+            plugin.Say(caller, "Use /cdaily for daily challenges.");
+            plugin.Say(caller, "Use /cweekly for weekly challenges.");
             return;
         }
 
-        foreach (var challenge in challenges)
-        {
-            var progress = plugin.Store.GetOrCreateProgress(caller.Id, challenge.Definition.Id, challenge.PeriodKey);
-            var claimed = progress.RewardClaimed ? "claimed" : progress.Progress >= challenge.Definition.Target ? "ready" : "in progress";
-            UnturnedChat.Say(caller, plugin.Prefix($"{challenge.Period}: {challenge.Definition.Name} ({challenge.Definition.Id}) - {progress.Progress}/{challenge.Definition.Target} {claimed}"));
-        }
+        ChallengeCommandUtility.ShowPeriod(caller, period, period.Equals("daily", StringComparison.OrdinalIgnoreCase) ? "cdaily" : "cweekly");
     }
 }

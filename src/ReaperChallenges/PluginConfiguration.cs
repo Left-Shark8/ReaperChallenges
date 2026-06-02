@@ -7,6 +7,9 @@ namespace ReaperChallenges;
 public sealed class PluginConfiguration : IRocketPluginConfiguration
 {
     public string ChatPrefix { get; set; } = "[Challenges]";
+    public byte ChatColorRed { get; set; } = 255;
+    public byte ChatColorGreen { get; set; } = 16;
+    public byte ChatColorBlue { get; set; } = 240;
     public bool AnnounceCompletedChallenges { get; set; } = true;
     public bool GiveRewardItems { get; set; } = true;
     public int DailyChallengeCount { get; set; } = 3;
@@ -18,6 +21,9 @@ public sealed class PluginConfiguration : IRocketPluginConfiguration
     public void LoadDefaults()
     {
         ChatPrefix = "[Challenges]";
+        ChatColorRed = 255;
+        ChatColorGreen = 16;
+        ChatColorBlue = 240;
         AnnounceCompletedChallenges = true;
         GiveRewardItems = true;
         DailyChallengeCount = 3;

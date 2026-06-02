@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Rocket.API;
-using Rocket.Unturned.Chat;
 
 namespace ReaperChallenges.Commands;
 
@@ -18,12 +17,11 @@ public sealed class CommandChallengesReload : IRocketCommand
         var plugin = Plugin.Instance;
         if (plugin?.Store == null)
         {
-            UnturnedChat.Say(caller, "ReaperChallenges is not loaded.");
             return;
         }
 
         plugin.SaveCleanConfiguration();
         plugin.Store.Save();
-        UnturnedChat.Say(caller, plugin.Prefix("Challenge configuration saved."));
+        plugin.Say(caller, "Challenge configuration saved.");
     }
 }

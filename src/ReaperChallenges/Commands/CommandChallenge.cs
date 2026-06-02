@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using Rocket.API;
-using Rocket.Unturned.Chat;
 using Rocket.Unturned.Player;
 
 namespace ReaperChallenges.Commands;
@@ -19,13 +18,12 @@ public sealed class CommandChallenge : IRocketCommand
         var plugin = Plugin.Instance;
         if (plugin?.Store == null)
         {
-            UnturnedChat.Say(caller, "ReaperChallenges is not loaded.");
             return;
         }
 
         if (command.Length == 0)
         {
-            UnturnedChat.Say(caller, plugin.Prefix(Syntax));
+            plugin.Say(caller, "Use /cdaily or /cweekly to view and claim challenges.");
             return;
         }
 
@@ -34,7 +32,7 @@ public sealed class CommandChallenge : IRocketCommand
         var challenge = plugin.FindActiveChallenge(caller.Id, id);
         if (challenge == null)
         {
-            UnturnedChat.Say(caller, plugin.Prefix("That challenge is not active right now."));
+            plugin.Say(caller, "That challenge is not active right now.");
             return;
         }
 
@@ -42,19 +40,20 @@ public sealed class CommandChallenge : IRocketCommand
         if (!claim)
         {
             var claimed = progress.RewardClaimed ? "Reward claimed." : progress.Progress >= challenge.Definition.Target ? "Ready to claim." : "Not complete yet.";
-            UnturnedChat.Say(caller, plugin.Prefix($"{challenge.Definition.Name}: {challenge.Definition.Description} Progress {progress.Progress}/{challenge.Definition.Target}. {claimed}"));
+            plugin.Say(caller, $"{challenge.Definition.Name} [{progress.Progress}/{challenge.Definition.Target}]");
+            plugin.Say(caller, $"{challenge.Definition.Description} {claimed}");
             return;
         }
 
         if (progress.Progress < challenge.Definition.Target)
         {
-            UnturnedChat.Say(caller, plugin.Prefix($"Not complete yet: {progress.Progress}/{challenge.Definition.Target}."));
+            plugin.Say(caller, $"Not complete yet: {progress.Progress}/{challenge.Definition.Target}.");
             return;
         }
 
         if (progress.RewardClaimed)
         {
-            UnturnedChat.Say(caller, plugin.Prefix("You already claimed that reward."));
+            plugin.Say(caller, "You already claimed that reward.");
             return;
         }
 
