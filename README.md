@@ -66,6 +66,14 @@ Default daily and weekly challenge pools are generated on first load. Players re
 <CompletionEffectId>20</CompletionEffectId>
 <CompletionEffectRadius>48</CompletionEffectRadius>
 <CompletionEffectYOffset>1</CompletionEffectYOffset>
+<FindResourceItemIds>
+  <unsignedShort>37</unsignedShort>
+  <unsignedShort>38</unsignedShort>
+  <unsignedShort>39</unsignedShort>
+  <unsignedShort>40</unsignedShort>
+  <unsignedShort>41</unsignedShort>
+  <unsignedShort>42</unsignedShort>
+</FindResourceItemIds>
 ```
 
 Daily pool:
@@ -134,7 +142,7 @@ find_throwable
 Set `RewardItemId` to `0` if a challenge should only send a completion message.
 
 `chop_tree` is driven by Unturned's `FOUND_RESOURCES` stat update, which is the closest Rocket-exposed signal for chopped resource nodes.
-`find_resource` uses that same stat, so you can keep both in the pool or remove one from the config if they feel too similar in live play.
+`find_resource` is tracked from inventory additions using configurable item IDs. The default list includes vanilla logs, sticks, planks, raw berries, and berry seeds. Add your server's custom resource item IDs to `FindResourceItemIds`.
 `find_throwable` is tracked from inventory additions by checking whether the added item asset type is `THROWABLE`.
 
 You can still define custom challenge types and advance them with:

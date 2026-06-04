@@ -21,6 +21,7 @@ public sealed class PluginConfiguration : IRocketPluginConfiguration
     public int DailyChallengeCount { get; set; } = 3;
     public int WeeklyChallengeCount { get; set; } = 3;
     public int SaveIntervalSeconds { get; set; } = 120;
+    public List<ushort> FindResourceItemIds { get; set; } = new();
     public List<ChallengeDefinition> DailyChallenges { get; set; } = new();
     public List<ChallengeDefinition> WeeklyChallenges { get; set; } = new();
 
@@ -41,6 +42,13 @@ public sealed class PluginConfiguration : IRocketPluginConfiguration
         DailyChallengeCount = 3;
         WeeklyChallengeCount = 3;
         SaveIntervalSeconds = 120;
+        FindResourceItemIds = new List<ushort>
+        {
+            37, 38, 39, 40, 41, 42,
+            61, 62, 63,
+            115, 270, 271, 272, 273, 274, 275,
+            1104, 1105, 1106, 1107, 1108, 1109, 1110,
+        };
         DailyChallenges = new List<ChallengeDefinition>
         {
             Create("daily_zombie_kills", "Zombie Slayer", "Kill 100 zombies.", "zombie_kill", 100),

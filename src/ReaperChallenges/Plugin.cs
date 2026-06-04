@@ -270,7 +270,6 @@ public sealed class Plugin : RocketPlugin<PluginConfiguration>
                 break;
             case EPlayerStat.FOUND_RESOURCES:
                 AddProgress(steamId, player.DisplayName, "chop_tree", 1, true);
-                AddProgress(steamId, player.DisplayName, "find_resource", 1, true);
                 break;
             case EPlayerStat.FOUND_PLANTS:
                 AddProgress(steamId, player.DisplayName, "harvest_crop", 1, true);
@@ -302,6 +301,11 @@ public sealed class Plugin : RocketPlugin<PluginConfiguration>
     private void OnPlayerInventoryAdded(UnturnedPlayer player, InventoryGroup inventoryGroup, byte inventoryIndex, ItemJar itemJar)
     {
         var itemAsset = Assets.find(EAssetType.ITEM, itemJar.item.id) as ItemAsset;
+        if (IsFindResourceItem(itemJar.item.id))
+        {
+            AddProgress(player.CSteamID.m_SteamID.ToString(), player.DisplayName, "find_resource", 1, true);
+        }
+
         if (itemAsset?.type != EItemType.THROWABLE)
         {
             return;
@@ -348,9 +352,11 @@ public sealed class Plugin : RocketPlugin<PluginConfiguration>
 
         configuration.DailyChallenges ??= new List<ChallengeDefinition>();
         configuration.WeeklyChallenges ??= new List<ChallengeDefinition>();
+        configuration.FindResourceItemIds ??= new List<ushort>();
 
         var defaults = new PluginConfiguration();
         defaults.LoadDefaults();
+        MergeMissingResourceItemIds(configuration.FindResourceItemIds, defaults.FindResourceItemIds);
         MergeMissingDefinitions(configuration.DailyChallenges, defaults.DailyChallenges);
         MergeMissingDefinitions(configuration.WeeklyChallenges, defaults.WeeklyChallenges);
 
@@ -368,6 +374,17 @@ public sealed class Plugin : RocketPlugin<PluginConfiguration>
             }
 
             target.Add(definition);
+        }
+    }
+
+    private static void MergeMissingResourceItemIds(List<ushort> target, IEnumerable<ushort> defaults)
+    {
+        foreach (var itemId in defaults)
+        {
+            if (!target.Contains(itemId))
+            {
+                target.Add(itemId);
+            }
         }
     }
 
@@ -438,6 +455,11 @@ public sealed class Plugin : RocketPlugin<PluginConfiguration>
         {
             Rocket.Core.Logging.Logger.LogException(exception, "Failed to play challenge completion effect.");
         }
+    }
+
+    private bool IsFindResourceItem(ushort itemId)
+    {
+        return Configuration.Instance.FindResourceItemIds?.Contains(itemId) == true;
     }
 
     private static int GetProgressPercent(int progress, int target)
