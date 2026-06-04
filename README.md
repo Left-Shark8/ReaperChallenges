@@ -135,6 +135,7 @@ Set `RewardItemId` to `0` if a challenge should only send a completion message.
 
 `chop_tree` is driven by Unturned's `FOUND_RESOURCES` stat update, which is the closest Rocket-exposed signal for chopped resource nodes.
 `find_resource` uses that same stat, so you can keep both in the pool or remove one from the config if they feel too similar in live play.
+`find_throwable` is tracked from inventory additions by checking whether the added item asset type is `THROWABLE`.
 
 You can still define custom challenge types and advance them with:
 

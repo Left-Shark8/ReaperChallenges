@@ -9,6 +9,7 @@ using Rocket.API;
 using Rocket.Core.Plugins;
 using Rocket.Unturned;
 using Rocket.Unturned.Chat;
+using Rocket.Unturned.Enumerations;
 using Rocket.Unturned.Events;
 using Rocket.Unturned.Player;
 using SDG.Unturned;
@@ -33,6 +34,7 @@ public sealed class Plugin : RocketPlugin<PluginConfiguration>
 
         U.Events.OnPlayerConnected += OnPlayerConnected;
         UnturnedPlayerEvents.OnPlayerDeath += OnPlayerDeath;
+        UnturnedPlayerEvents.OnPlayerInventoryAdded += OnPlayerInventoryAdded;
         UnturnedPlayerEvents.OnPlayerUpdateStat += OnPlayerUpdateStat;
         StartCoroutine(SaveLoop());
 
@@ -43,6 +45,7 @@ public sealed class Plugin : RocketPlugin<PluginConfiguration>
     {
         StopAllCoroutines();
         UnturnedPlayerEvents.OnPlayerUpdateStat -= OnPlayerUpdateStat;
+        UnturnedPlayerEvents.OnPlayerInventoryAdded -= OnPlayerInventoryAdded;
         UnturnedPlayerEvents.OnPlayerDeath -= OnPlayerDeath;
         U.Events.OnPlayerConnected -= OnPlayerConnected;
         Store?.Save();
@@ -293,10 +296,18 @@ public sealed class Plugin : RocketPlugin<PluginConfiguration>
             case EPlayerStat.FOUND_BUILDABLES:
                 AddProgress(steamId, player.DisplayName, "find_buildable", 1, true);
                 break;
-            case EPlayerStat.FOUND_THROWABLES:
-                AddProgress(steamId, player.DisplayName, "find_throwable", 1, true);
-                break;
         }
+    }
+
+    private void OnPlayerInventoryAdded(UnturnedPlayer player, InventoryGroup inventoryGroup, byte inventoryIndex, ItemJar itemJar)
+    {
+        var itemAsset = Assets.find(EAssetType.ITEM, itemJar.item.id) as ItemAsset;
+        if (itemAsset?.type != EItemType.THROWABLE)
+        {
+            return;
+        }
+
+        AddProgress(player.CSteamID.m_SteamID.ToString(), player.DisplayName, "find_throwable", 1, true);
     }
 
     private IEnumerator SaveLoop()
